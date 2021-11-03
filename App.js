@@ -1,21 +1,41 @@
-import { StatusBar } from 'expo-status-bar';
-import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useRef, useState } from "react";
+import { Animated, TouchableOpacity, Easing } from "react-native";
+import styled from "styled-components/native";
+
+const Container = styled.View`
+  flex: 1;
+  justify-content: center;
+  align-items: center;
+`;
+
+const Box = styled.View`
+  width: 200px;
+  height: 200px;
+  background-color: tomato;
+`;
+
+const AnimatedBox = Animated.createAnimatedComponent(Box);
 
 export default function App() {
+  const [up, setUp] = useState(false);
+  const Y_POSITION = useRef(new Animated.Value(300)).current;
+  const toggleUp = () => setUp((prev) => !prev);
+  const moveUp = () => {
+    Animated.timing(Y_POSITION, {
+      toValue: up ? 300 : -300,
+      useNativeDriver: true,
+      Easing: Easing.bounce,
+    }).start(toggleUp);
+  };
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <Container>
+      <TouchableOpacity onPress={moveUp}>
+        <AnimatedBox
+          style={{
+            transform: [{ translateY: Y_POSITION }],
+          }}
+        />
+      </TouchableOpacity>
+    </Container>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
