@@ -1,5 +1,5 @@
 import React, { useRef, useState } from "react";
-import { Animated, TouchableOpacity, Easing } from "react-native";
+import { Animated, TouchableOpacity, Easing, Pressable } from "react-native";
 import styled from "styled-components/native";
 
 const Container = styled.View`
@@ -24,18 +24,33 @@ export default function App() {
     Animated.timing(Y_POSITION, {
       toValue: up ? 300 : -300,
       useNativeDriver: true,
-      Easing: Easing.bounce,
+      duration: 1000,
     }).start(toggleUp);
   };
+  const opacity = Y_POSITION.interpolate({
+    inputRange: [-300, 0, 300],
+    outputRange: [1, 0.5, 1],
+  });
+  const borderRadius = Y_POSITION.interpolate({
+    inputRange: [-300, 300],
+    outputRange: [100, 0],
+  });
+  Y_POSITION.addListener(() => {
+    console.log("Y_POSITION:", Y_POSITION);
+    console.log("opacity:", opacity);
+    console.log("borderRadious:", borderRadius);
+  });
   return (
     <Container>
-      <TouchableOpacity onPress={moveUp}>
+      <Pressable onPress={moveUp}>
         <AnimatedBox
           style={{
+            borderRadius,
+            opacity,
             transform: [{ translateY: Y_POSITION }],
           }}
         />
-      </TouchableOpacity>
+      </Pressable>
     </Container>
   );
 }
