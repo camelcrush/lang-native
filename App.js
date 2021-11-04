@@ -32,6 +32,13 @@ export default function App() {
       onPanResponderMove: (_, { dx, dy }) => {
         position.setValue({ x: dx, y: dy });
       },
+      onPanResponderRelease: () => {
+        Animated.spring(position, {
+          toValue: { x: 0, y: 0 },
+          bounciness: 20,
+          useNativeDriver: false,
+        }).start();
+      },
     })
   ).current;
   return (
