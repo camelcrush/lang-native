@@ -29,15 +29,14 @@ export default function App() {
   const panRespnder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
+      onPanResponderGrant: () => {
+        position.setOffset({ x: position.x._value, y: position.y._value });
+      },
       onPanResponderMove: (_, { dx, dy }) => {
         position.setValue({ x: dx, y: dy });
       },
       onPanResponderRelease: () => {
-        Animated.spring(position, {
-          toValue: { x: 0, y: 0 },
-          bounciness: 20,
-          useNativeDriver: false,
-        }).start();
+        position.flattenOffset();
       },
     })
   ).current;
