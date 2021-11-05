@@ -67,11 +67,15 @@ export default function App() {
     toValue: -500,
     tension: 5,
     useNativeDriver: true,
+    restSpeedThreshold: 100,
+    restDisplacementThreshold: 100,
   });
   const goRight = Animated.spring(position, {
     toValue: 500,
     tension: 5,
     useNativeDriver: true,
+    restSpeedThreshold: 100,
+    restDisplacementThreshold: 100,
   });
   const closePress = () => {
     goLeft.start(onDismiss);
@@ -95,9 +99,9 @@ export default function App() {
       },
       onPanResponderGrant: () => onPressIn.start(),
       onPanResponderRelease: (_, { dx }) => {
-        if (dx < -250) {
+        if (dx < -220) {
           goLeft.start(onDismiss);
-        } else if (dx > 250) {
+        } else if (dx > 220) {
           goRight.start(onDismiss);
         } else {
           Animated.parallel([onPressOut, goCenter]).start();
