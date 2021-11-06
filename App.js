@@ -37,15 +37,48 @@ const Word = styled.Text`
 
 const Center = styled.View`
   flex: 3;
+  justify-content: center;
+  align-items: center;
+`;
+
+const IconCard = styled(Animated.createAnimatedComponent(View))`
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
 `;
 
 export default function App() {
   // Values
-
+  const scale = useRef(new Animated.Value(1)).current;
+  const position = useRef(new Animated.ValueXY({ x: 0, y: 0 })).current;
   // Animattions
-
+  const onPressIn = Animated.spring(scale, {
+    toValue: 0.9,
+    useNativeDriver: true,
+  });
+  const onPressOut = Animated.spring(scale, {
+    toValue: 1,
+    useNativeDriver: true,
+  });
+  const goHome = Animated.spring(position, {
+    toValue: 0,
+    useNativeDriver: true,
+  });
   // Pan Responder
-
+  const panResponder = useRef(
+    PanResponder.create({
+      onStartShouldSetPanResponder: () => true,
+      onPanResponderMove: (_, { dx, dy }) => {
+        position.setValue({ x: dx, y: dy });
+      },
+      onPanResponderGrant: () => {
+        onPressIn.start();
+      },
+      onPanResponderRelease: () => {
+        Animated.parallel([onPressOut, goHome]).start();
+      },
+    })
+  ).current;
   return (
     <Container>
       <Edge>
@@ -53,7 +86,16 @@ export default function App() {
           <Word color={GREEN}>알아</Word>
         </WordContainer>
       </Edge>
-      <Center></Center>
+      <Center>
+        <IconCard
+          {...panResponder.panHandlers}
+          style={{
+            transform: [{ scale }, ...position.getTranslateTransform()],
+          }}
+        >
+          <Ionicons name="beer" color={GRAY} size={76} />
+        </IconCard>
+      </Center>
       <Edge>
         <WordContainer>
           <Word color={RED}>몰라</Word>
